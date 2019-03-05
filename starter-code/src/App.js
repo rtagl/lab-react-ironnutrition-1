@@ -8,8 +8,11 @@ class App extends Component {
   
   state = {
     foods: foods,
-    todaysFood: []
+    todaysFood: [],
+    value: 1,
+    totalCalories: 0
   }
+
 
   showFood = () => {
     let list = this.state.foods.map((food,i) => {
@@ -32,9 +35,10 @@ class App extends Component {
                   <div className="field has-addons">
                     <div className="control">
                       <input
+                      onChange={()=> {this.changeQty(food)}}
                         className="input"
                         type="number" 
-                        value="1"
+                        value={food.quantity}
                       />
                     </div>
                     <div className="control">
@@ -52,7 +56,7 @@ class App extends Component {
 
   todaysFood = () => {
     let list = this.state.todaysFood.map((food, i) => {
-      return <li>{food.name}</li>
+      return <li>{food.quantity} {food.name} = {Number(food.calories)*Number(food.quantity)} calories</li>
     })
     return list;
   }
@@ -61,18 +65,34 @@ class App extends Component {
     let updatedTodaysFood = [...this.state.todaysFood]
     updatedTodaysFood.push(food)
     this.setState ({
+      todaysFood: updatedTodaysFood,
+      totalCalories: this.state.totalCalories + (Number(food.calories)*Number(food.quantity))
+    })
+  }
+
+  
+  changeQty = (food) => {
+    let updatedTodaysFood = [...this.state.todaysFood]
+    food.quantity += 1
+    this.setState ({
       todaysFood: updatedTodaysFood
     })
   }
-  
+
   render() {
     return (
       <div className="App">
-        <div class="allFoods">
+        <div>
+          <input type="text" className="input" placeholder="Search..." />
+        </div>
+        <br />
+        <div className="allFoods">
           {this.showFood()}
         </div>
-        <div class="todaysFood">
+        <div className="todaysFood">
+          <h2>Today's Food</h2>
           <ul>{this.todaysFood()}</ul>
+          <span>Total: {this.state.totalCalories}</span>
         </div>
       </div>
     );
